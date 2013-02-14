@@ -49,11 +49,12 @@ Mert \textsc{Eker}\\
 \tableofcontents
 
 \begin{chapter}{Giriş}
-This document gives a quick introduction to the Scala language and compiler. It is intended for people who already have some programming experience and want an overview of what they can do with Scala. A basic knowledge of object-oriented programming, especially in Java, is assumed.
+Bu belge Scala programlama dili ve derleyicisi(compiler) hakkında kısa bir bilgi vermek için, programlama tecrübesi olan ve Scala ile neler yapabileceklerine genel bir bakış atmak isteyenler için hazırlanmıştır. Özellikle Java'da, nesneye dayalı programlama hakkında bilgi sahibi olunduğu varsayılmıştır.
 \end{chapter}
 
 \begin{chapter}{İlk Örnek}
 
+İlk örnek olarak, standart \textit{Hello world} programını kullanacağız. Çok etkileyici olmasa da Scala hakkında pek bir şey bilmeden dilin araçlarının kullanımını göstermesi açısından basit bir örnektir:
 
 \begin{verbatim}
    object HelloWorld {
@@ -63,13 +64,34 @@ This document gives a quick introduction to the Scala language and compiler. It 
    }
 \end{verbatim}
 
+Bu programın yapısı Java programcılarına tanıdık gelmiş olması lazım: parametre olarak komut satırı argümanları, bir dizgi(string) dizisi alan bir \texttt{main} metodu içeriyor, ve bu metodun gövdesi de dostça bir selamlama argümanı içeren öntanımlı \texttt{println} metodundan oluşuyor. \texttt{main} metodu herhangi bir değer geri döndürmez(çünkü bir işlem metodudur), bu yüzden herhangi bir geri dönüş türü bildirmeye gerek yoktur.
 
+Java programcılarına daha az tanıdık gelen kısım ise \texttt{main} metodunu içeren \textbf{obje}nin bildirimidir. Bu tarz bir bildirim bizi, daha çok bilinen adıyla, \textit{tek elemanlı obje}'yle tanıştırır, yani tek örnekli sınıf(class)'la. Yukarıdaki bildirim hem \texttt{HelloWorld} adlı sınıfı hem de bu sınıfın yine \texttt{HelloWorld} adlı örneğini bildirir. This instance is created on demand, the first time it is used. 
 
-\begin{section}{Compiling the example}
+Dikkatli bir okuyucu \texttt{main} metodunun \texttt{static} olarak bildirilmediğini farketmiş olabilir. Bunun nedeni statik elemanlar(metodlar veya alanlar)ın Scala'da bulunmamasındandır. Scala programcısı statik elemanları tanımlamak yerine, bu elemanları tek elemanlı objelerde bildirir.
+
+\begin{section}{Örneği derlemek}
+
+Örneği derlemek için \texttt{scalac}'ı, yani Scala derleyicisini(compiler) kullanılır. \texttt{scalac} çoğu derleyiciye benzer şekilde çalışır: bir kaynak dosyasını argüman olarak alır ve bir veya birkaç tane obje dosyası oluşturur. Oluşturduğu obje dosyaları standart Java sınıf dosyalarıdır.
+Eğer yukarıdaki programı bir dosyaya \texttt{HelloWorld.scala} adıyla kaydedersek, onu şu komutla derleyebiliriz(büyük-eşit '$>$' işareti kabuk bilgi istemini temsil eder ve yazılmamalıdır):
+
+\begin{verbatim}
+> scalac HelloWorld.scala
+\end{verbatim}
+
+Bu, mevcut dizinde(directory) birkaç sınıf dosyası oluşturur. Bir tanesi \texttt{HelloWorld.\textbf{class}} diye adlandırılır ve, bir sonraki kısımda göreceğimiz üzere, \texttt{scala} komutuyla direkt olarak yürütülebilen(execute) bir sınıf içerir.
 
 \end{section}
 
-\begin{section}{Running the example}
+\begin{section}{Örneği çalıştırmak}
+
+Bir Scala programı, bir kere derlendiği zaman \texttt{scala} komutuyla çalışıtırılabilir. Kullanımı Java programlarını çalıştırmak için kullanılan \texttt{java} komutuna çok benzer ve aynı seçenekleri kabul eder. Yukarıdaki örnek şu komutla yürütülebilir ve beklenen çıktıyı verir:
+
+\begin{verbatim}
+> scala -classpath . HelloWorld
+
+Hello, world!
+\end{verbatim}
 
 \end{section}
 
