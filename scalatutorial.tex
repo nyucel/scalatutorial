@@ -24,7 +24,7 @@
 \begin{titlepage}
 \begin{center}
 \HRule \\[1.5cm]
-{ \huge \bfseries A Scala Tutorial for Java programmers}\\[1.5cm]
+{ \huge \bfseries Java Programcıları için Scala Rehberi}\\[1.5cm]
 \HRule \\[1.5cm]
 
 \begin{minipage}{0.4\textwidth}
@@ -92,16 +92,53 @@ Bir Scala programı, bir kere derlendiği zaman \texttt{scala} komutuyla çalı�
 
 Hello, world!
 \end{verbatim}
-
 \end{section}
-
 \end{chapter}
 
-\begin{chapter}{Interaction with Java}
+\begin{chapter}{Java ile Etkileşim}
 
+Scala'nın güçlü yönlerinden biri de Java'yla etkileşiminin oldukça kolay olmasıdır. \texttt{java.lang} paketindeki bütün sınıflar varsayılan olarak içeri aktarılmıştır(import), fakat diğer paketlerin doğrudan içeri aktarılması gerekmektedir.
+
+Şimdi bunu açıklayan bir örneğe bakalım: Örneğin belirlediğimiz bir ülkedeki, Fransa\begin{footnote}{Other regions such as the french speaking part of Switzerland use the same conventions.}\end{footnote} diyelim, şu andaki tarihine edinmek ve biçimlendirmek istiyoruz.
+
+Java'nın sınıf kitaplıkları \texttt{Date} ve \texttt{DateFormat} gibi oldukça güçlü yardımcı sınıflar tanımlar. Scala Java'yla sorunsuz bir şekilde birlikte çalıştığı için, eşdeğer sınıfları Scala'nın sınıf kitaplığında uygulamamız gerekmez (basitçe Java paketlerinden karşılık gelen sınıfı içeri aktarabiliriz).
+
+\begin{verbatim}
+import java.util.{Date, Locale}
+import java.text.DateFormat
+import java.text.DateFormat._
+
+object FrenchDate {
+   def main(args: Array[String]) {
+      val now = new Date
+      val df = getDateInstance(LONG, Locale.FRANCE)
+      println(df format now)
+   }
+}
+\end{verbatim}
+
+Scala'nın içeri aktarma ifadesi Java'nınkine oldukça benzerdir, fakat daha güçlüdür. Yukarıdaki kodun ilk satırında görüldüğü üzere; sınıflar toplu bir şekilde, aynı paketten süslü parantez içine alınarak içeri aktarılabilir. Bir başka fark da, bir paketin veya sınıfın bütün elemanlarını içeri aktarırken yıldız ($*$) yerine alt tire (\_) kullanılmasıdır. Bunun nedeni yıldız işaretinin Scala'da geçerli bir kimlik tanıtıcı (örn. metod adı) olmasıdır. Buna daha sonra değineceğiz.
+
+Yukarıdaki sebepten dolayı üçüncü satırdaki import ifadesi \texttt{DateFormat} sınıfındaki bütün elemanları içeri aktarır. Bu da statik bir metod olan \texttt{getDateInstance} ve statik alan \texttt{LONG}'u direkt olarak görünür hale getirir.
+
+\texttt{main} metodunun içinde ilk olarak mevcut tarihi içeren, Java'nın \texttt{Date} sınıfının bir örneğini yarattık. Daha sonra, önceden içeri aktardığımız statik \texttt{getDateInstance} metoduyla bir tarih formatı tanımladık. Son olarak da, yerini belirlediğimiz \texttt{DateFormat} örneğiyle mevcut tarihi yazdırdık. Son satır bize Scala'nın sözdiziminin ilginç bir özelliğini gösteriyor; tek argüman içeren metodlar iç ekli sözdizimiyle birlikte kullanılabilir. Şu şekilde gösterim;
+
+\begin{verbatim}
+df format now
+\end{verbatim}
+
+aşağıdaki gösterimin daha az ayrıntılı ve basitleştirilmiş gösterimidir:
+
+\begin{verbatim}
+df.format(now)
+\end{verbatim}
+
+Bu küçük bir sözdizimsel ayrıntı gibi gözükebilir, fakat önemli neticeleri vardır. Bunları bir sonraki kısımda göreceğiz.
+
+Scala'nın Java'yla etkileşimi hakkındaki bu kısmı özetlemek gerekirse; Java sınıfları ve Java arayüzleri Scala'da doğrudan devralınabilir.
 \end{chapter}
 
-\begin{chapter}{Everything is an object}
+\begin{chapter}{Herşey bir Nesne}
 
 \begin{section}{Numbers are objects}
 
