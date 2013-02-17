@@ -138,16 +138,84 @@ Bu küçük bir sözdizimsel ayrıntı gibi gözükebilir, fakat önemli neticel
 Scala'nın Java'yla etkileşimi hakkındaki bu kısmı özetlemek gerekirse; Java sınıfları ve Java arayüzleri Scala'da doğrudan devralınabilir.
 \end{chapter}
 
-\begin{chapter}{Herşey bir Nesne}
+\begin{chapter}{Herşey bir nesne}
 
-\begin{section}{Numbers are objects}
+Scala saf bir nesneye dahalı programlama dilidir; yani ,sayılar ve fonksiyonlar da dahil, \textit{her şey} bir objedir. Bu bağlamda Java'dan farklılık gösterir, çünkü Java ilkel türleri(\texttt{boolean} ve \texttt{int} gibi) referans türlerden ayırır ve fonksiyonların değer olarak kullanılmasına müsade etmez.
 
+\begin{section}{Sayılar birer nesnedir}
+
+Numaralar da obje oldukları için, onların da metodları vardır. Ve aslında, şu şekilde olan aritmetik gösterimler;
+
+\begin{verbatim}
+1 + 2 * 3 / x
+\end{verbatim}
+
+sadece metod çağrıları içerir, çünkü aşağıdaki gösterime eşdeğerdir:
+
+\begin{verbatim}
+(1).+(((2).*(3))./(x))
+\end{verbatim}
+
+Bu aynı zamanda +,*,vb. işaretlerin Scala'da geçerli belirteçler olduğunu gösterir.
+
+İkinci versiyondaki numaraların etrafındaki parantezler gereklidir çünkü Scala'nın sözcük analizi token'lar için en uzun eşleşme kuralını kullanır. Bu yüzden aşağıdaki gösterimi
+
+\begin{verbatim}
+1.+(2)
+\end{verbatim}
+
+\texttt{1., +, 2} token'larına ayırır. Bu token'lara ayırma yönteminin seçilmesinin nedeni \texttt{1.}'in \texttt{1}'den daha uzun bir geçerli eşleşme olmasıdır. \texttt{1.} token'ına aslında \texttt{1.0} gibi davranılır, yani \texttt{Int} yerine \texttt{Double} kabul edilir.
+
+Şu şekilde yazmak;
+
+\begin{verbatim}
+(1).+(2)
+\end{verbatim}
+
+\texttt{1}'e \texttt{Double} gibi davranılmasını engeller.
 \end{section}
 
-\begin{section}{Functions are objects}
+\begin{section}{Fonksiyonlar birer nesnedir}
 
-\begin{subsection}{Anonymous functions}
+Muhtemelen Java programcısı için daha sürpriz edici olan, Scala'da fonksiyonların aynı zamanda birer obje olmasıdır. Bu yüzden fonksiyonları argüman olarak geçmek, değişkenler içinde saklayabilmek ve başka fonksiyonlardan geri döndürmek Scala'da mümkündür. Bu fonksiyonları değer olarak kullanabilme kabiliyeti, \textit{fonksiyonel programlama} adı verilen çok ilginç bir programlama tekniğinin temel taşıdır.
 
+Fonksiyonların değer olarak kullanılmasının neden bu kadar kullanışlı olduğuna çok basit bir örnek olarak, her saniye aynı eylemi gerçekleştirme amacı olan bir zamanlayıcı fonksiyonunu düşünelim. Bu eylemi nasıl uygulamaya geçirebiliriz? Mantıklı cevap, fonksiyon olarak. Bu çok basit fonksiyon geçişi pek çok programcıya tanıdık gelecektir: Bu sıkça kullanıcı arayüzü kodlarında, bir etkinlik olduğunda çağırılan geri çağırma fonksiyonlarını kaydetmek için kullanılır.
+
+Aşağıdaki programda, \texttt{oncePerSecond} adını verdiğimiz zamanlayıcı fonksiyon argüman olarak bir geri çağırma fonksiyonunu alıyor. Bu fonksiyonun türü; \texttt{() =$>$ Unit} olarak yazılır ve, hiç bir argüman almayan ve hiç bir şey döndürmeyen bütün fonksiyonların türüdür(\texttt{Unit türü C/C++'taki \texttt{void}'e benzer}. \texttt{main} fonksiyonu basitçe, bir cümle yazdıran zamanlayıcı fonksiyonu geri çağırmayla çağırır. Bir başka deyişle, bu program sonsuza kadar her saniye "time flies like an arrow" cümlesini yazdırır.
+
+\begin{verbatim}
+object Timer {
+   def oncePerSecond(callback: () => Unit) {
+      while (true) { callback(); Thread sleep 1000 }
+   }
+   def timeFlies() {
+      println("time flies like an arrow...")
+   }
+   def main(args: Array[String]) {
+      oncePerSecond(timeFlies)
+   }
+}
+\end{verbatim}
+
+Dizgiyi yazdırmak için varsayılan \texttt{println} metodunu başına \texttt{System.out.} yazmadan kullandık.
+
+\begin{subsection}{Anonim fonksiyonlar}
+
+Yukarıdaki program anlaşılması kolay olsa da biraz daha güzelleştirilebilir. İlk olarak, \texttt{timeFlies} metodunun sadece daha sonra \texttt{oncePerSecond} geçmek için tanımlandığı farkediliyor. Sadece bir defa kullanılacak bu fonksiyonu isimlendirmek çok da gerekli olmayabilir ve aslında \texttt{oncePerSecond}'a geçer geçmez bu fonksiyonu oluşturmak çok daha iyi olur. Bu, Scala'da \textit{anonim fonksiyonlar} ile mümkündür, yani bir ismi olmayan fonksiyonlar ile. Zamanlayıcı programımımızın \texttt{timeFlies} yerine anonim fonksiyon kullanılmış hali şunun gibidir:
+
+\begin{verbatim}
+object TimerAnonymous {
+   def oncePerSecond(callback: () => Unit) {
+      while (true) { callback(); Thread sleep 1000 }
+   }
+   def main(args: Array[String]) {
+      oncePerSecond(() =>
+         println("time flies like an arrow..."))
+   }
+}
+\end{verbatim}
+
+Bu örnekteki anonim fonksiyonun varlığı, fonksiyonun argüman listesini gövdesinden ayıran sağ ok'=$>$' ile ortaya çıkarılır. Okun sağında görüldüğü gibi bu örnekte argüman listesi boş, fonksiyonun gövdesi ise yukarıdaki \texttt{timeFlies} fonksiyonununkiyle aynı.
 \end{subsection}
 
 \end{section}
